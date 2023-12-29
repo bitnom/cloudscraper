@@ -1,11 +1,11 @@
 # file: cloudscraper/__init__.py
 import logging
-import requests
+import httpx
 import sys
 import ssl
 
 from requests.adapters import HTTPAdapter
-from requests.sessions import Session
+from httpx import Client
 from requests_toolbelt.utils import dump
 
 try:
@@ -98,7 +98,7 @@ class CipherSuiteAdapter(HTTPAdapter):
         return super(CipherSuiteAdapter, self).proxy_manager_for(*args, **kwargs)
 
 
-class CloudScraper(Session):
+class CloudScraper(Client):
 
     def __init__(self, *args, **kwargs):
         self.debug = kwargs.pop('debug', False)

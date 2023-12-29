@@ -1,7 +1,8 @@
 # file: cloudscraper/help.py
 import json
 import platform
-import requests
+
+import httpx
 import ssl
 import sys
 import urllib3
@@ -50,7 +51,7 @@ def systemInfo():
         ('platform', platform_info),
         ('interpreter', _pythonVersion()),
         ('cloudscraper', cloudscraper_version),
-        ('requests', requests.__version__),
+        ('httpx', httpx.__version__),
         ('urllib3', urllib3.__version__),
         ('OpenSSL', OrderedDict(
             [
