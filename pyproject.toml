@@ -10,7 +10,7 @@ dependencies = [
     "pyparsing >= 2.4.7",
     "requests >= 2.9.2",
     "requests_toolbelt >= 0.9.1",
-    "aiohttp[speedups]>=3.9.1",
+    "httpx>=0.26.0",
 ]
 requires-python = ">=3.12"
 readme = "README.md"
