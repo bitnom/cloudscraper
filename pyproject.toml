@@ -1,0 +1,64 @@
+[project]
+name = "cloudscraper"
+version = "1.2.71"
+description = "A Python module to bypass Cloudflare's anti-bot page."
+authors = [
+    {name = "bitnom", email = "14287229+bitnom@users.noreply.github.com"},
+    {name = "VeNoMouS", email = "venom@gen-x.co.nz"},
+]
+dependencies = [
+    "pyparsing >= 2.4.7",
+    "requests >= 2.9.2",
+    "requests_toolbelt >= 0.9.1",
+    "aiohttp[speedups]>=3.9.1",
+]
+requires-python = ">=3.12"
+readme = "README.md"
+license = {text = "MIT"}
+keywords = ["cloudflare", "scraping", "ddos", "scrape", "webscraper", "anti-bot", "waf", "iuam", "bypass", "challenge"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Natural Language :: English",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.6",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Topic :: Internet :: WWW/HTTP",
+    "Topic :: Software Development :: Libraries :: Application Frameworks",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+
+[project.urls]
+Homepage = "https://github.com/venomous/cloudscraper"
+[build-system]
+requires = ["pdm-backend"]
+build-backend = "pdm.backend"
+
+[tool.pdm]
+package-type = "library"
+
+[tool.pdm.dev-dependencies]
+dev = [
+    "setuptools>=69.0.3",
+    "pytest>=6.1.0",
+    "pytest-cov>=2.10.1",
+    "pytest-xdist>=1.30.0",
+    "pytest-forked>=1.3.0",
+    "pytest-watch>=4.2.0",
+    "pytest-timeout>=1.3.3",
+    "pytest-env>=0.6.2",
+    "responses>=0.10.8",
+    "flake8>=3.7.9",
+    "tox>=3.14.2",
+    "coverage==4.5.4",
+    "coveralls>=1.9.2",
+    "autopep8>=1.4.4",
+    "js2py>=0.60",
+    "polling>=0.3.1",
+    "python-anticaptcha>=0.4.2",
+]
