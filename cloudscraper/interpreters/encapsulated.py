@@ -1,7 +1,6 @@
+# file: cloudscraper/interpreters/encapsulated.py
 import logging
 import re
-
-# ------------------------------------------------------------------------------- #
 
 
 def template(body, domain):
@@ -58,5 +57,3 @@ def template(body, domain):
         ),
         js
     )
-
-# ------------------------------------------------------------------------------- #

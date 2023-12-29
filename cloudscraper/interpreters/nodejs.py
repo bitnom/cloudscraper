@@ -1,3 +1,4 @@
+# file: cloudscraper/interpreters/nodejs.py
 import base64
 import subprocess
 import sys
@@ -5,17 +6,11 @@ import sys
 from . import JavaScriptInterpreter
 from .encapsulated import template
 
-# ------------------------------------------------------------------------------- #
-
 
 class ChallengeInterpreter(JavaScriptInterpreter):
 
-    # ------------------------------------------------------------------------------- #
-
     def __init__(self):
         super(ChallengeInterpreter, self).__init__('nodejs')
-
-    # ------------------------------------------------------------------------------- #
 
     def eval(self, body, domain):
         try:
@@ -43,7 +38,5 @@ class ChallengeInterpreter(JavaScriptInterpreter):
             sys.tracebacklimit = 0
             raise RuntimeError('Error executing Cloudflare IUAM Javascript in nodejs')
 
-
-# ------------------------------------------------------------------------------- #
 
 ChallengeInterpreter()

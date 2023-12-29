@@ -35,8 +35,6 @@ class captchaSolver(Captcha):
             'hCaptcha': 'hcaptcha'
         }
 
-    # ------------------------------------------------------------------------------- #
-
     @staticmethod
     def checkErrorStatus(response):
         if response.status_code in [500, 502]:
@@ -109,8 +107,6 @@ class captchaSolver(Captcha):
             if error_code:
                 raise CaptchaAPIError(error_codes.get(error_code))
 
-    # ------------------------------------------------------------------------------- #
-
     def requestJob(self, jobID):
         if not jobID:
             raise CaptchaBadJobID(
@@ -146,8 +142,6 @@ class captchaSolver(Captcha):
         else:
             raise CaptchaTimeout("9kw: Error failed to solve.")
 
-    # ------------------------------------------------------------------------------- #
-
     def requestSolve(self, captchaType, url, siteKey):
         def _checkRequest(response):
             if response.ok and response.text.startswith('{') and response.json().get('captchaid'):
@@ -182,7 +176,6 @@ class captchaSolver(Captcha):
         else:
             raise CaptchaBadJobID('9kw: Error no valid job id was returned.')
 
-    # ------------------------------------------------------------------------------- #
     def getCaptchaAnswer(self, captchaType, url, siteKey, captchaParams):
         jobID = None
 
@@ -208,7 +201,5 @@ class captchaSolver(Captcha):
                 f"9kw: solve took to long to execute 'captchaid' {jobID}, aborting."
             )
 
-
-# ------------------------------------------------------------------------------- #
 
 captchaSolver()

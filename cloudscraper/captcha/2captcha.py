@@ -1,6 +1,7 @@
 from __future__ import absolute_import
 
 import requests
+
 try:
     from urlparse import urlparse
 except ImportError:
@@ -34,8 +35,6 @@ class captchaSolver(Captcha):
             'hCaptcha': 'hcaptcha',
             'turnstile': 'turnstile'
         }
-
-    # ------------------------------------------------------------------------------- #
 
     @staticmethod
     def checkErrorStatus(response, request_type):
@@ -92,8 +91,6 @@ class captchaSolver(Captcha):
                 f"{rPayload['request']} {errors.get(request_type).get(rPayload['request'])}"
             )
 
-    # ------------------------------------------------------------------------------- #
-
     def reportJob(self, jobID):
         if not jobID:
             raise CaptchaBadJobID(
@@ -129,8 +126,6 @@ class captchaSolver(Captcha):
                 "2Captcha: Error - Failed to report bad Captcha solve."
             )
 
-    # ------------------------------------------------------------------------------- #
-
     def requestJob(self, jobID):
         if not jobID:
             raise CaptchaBadJobID("2Captcha: Error bad job id to request Captcha.")
@@ -163,8 +158,6 @@ class captchaSolver(Captcha):
             raise CaptchaTimeout(
                 "2Captcha: Error failed to solve Captcha."
             )
-
-    # ------------------------------------------------------------------------------- #
 
     def requestSolve(self, captchaType, url, siteKey):
         def _checkRequest(response):
@@ -210,8 +203,6 @@ class captchaSolver(Captcha):
                 '2Captcha: Error no job id was returned.'
             )
 
-    # ------------------------------------------------------------------------------- #
-
     def getCaptchaAnswer(self, captchaType, url, siteKey, captchaParams):
         jobID = None
 
@@ -252,7 +243,5 @@ class captchaSolver(Captcha):
                 f"2Captcha: Captcha solve took to long to execute job id {jobID}, aborting."
             )
 
-
-# ------------------------------------------------------------------------------- #
 
 captchaSolver()

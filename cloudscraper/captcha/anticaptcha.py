@@ -35,8 +35,6 @@ class captchaSolver(Captcha):
             'turnstile': 'TurnstileTask'
         }
 
-    # ------------------------------------------------------------------------------- #
-
     @staticmethod
     def checkErrorStatus(response):
         if response.status_code in [500, 502]:
@@ -52,8 +50,6 @@ class captchaSolver(Captcha):
                 )
             else:
                 raise CaptchaAPIError(payload['errorCode'])
-
-    # ------------------------------------------------------------------------------- #
 
     def requestJob(self, taskID):
         if not taskID:
@@ -93,8 +89,6 @@ class captchaSolver(Captcha):
             raise CaptchaTimeout(
                 "anticaptcha: Error failed to solve Captcha."
             )
-
-    # ------------------------------------------------------------------------------- #
 
     def requestSolve(self, captchaType, url, siteKey):
         def _checkRequest(response):
@@ -138,8 +132,6 @@ class captchaSolver(Captcha):
             raise CaptchaBadJobID(
                 'anticaptcha: Error no task id was returned.'
             )
-
-    # ------------------------------------------------------------------------------- #
 
     def getCaptchaAnswer(self, captchaType, url, siteKey, captchaParams):
         taskID = None
@@ -193,7 +185,5 @@ class captchaSolver(Captcha):
                 f"task id {taskID}, aborting."
             )
 
-
-# ------------------------------------------------------------------------------- #
 
 captchaSolver()

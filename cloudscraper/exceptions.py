@@ -1,14 +1,11 @@
-# -*- coding: utf-8 -*-
+# file: cloudscraper/exceptions.py
 
-# ------------------------------------------------------------------------------- #
 
 """
 cloudscraper.exceptions
 ~~~~~~~~~~~~~~~~~~~
 This module contains the set of cloudscraper exceptions.
 """
-
-# ------------------------------------------------------------------------------- #
 
 
 class CloudflareException(Exception):
@@ -59,8 +56,6 @@ class CloudflareCaptchaProvider(CloudflareException):
     """
     Raise an exception for no Captcha provider loaded for Cloudflare.
     """
-
-# ------------------------------------------------------------------------------- #
 
 
 class CaptchaException(Exception):

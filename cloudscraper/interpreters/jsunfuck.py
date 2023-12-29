@@ -1,3 +1,4 @@
+# file: cloudscraper/interpreters/jsunfuck.py
 MAPPING = {
     'a': '(false+"")[1]',
     'b': '([]["entries"]()+"")[2]',

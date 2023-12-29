@@ -2,6 +2,7 @@ from __future__ import absolute_import
 
 import json
 import requests
+
 try:
     from urlparse import urlparse
 except ImportError:
@@ -35,8 +36,6 @@ class captchaSolver(Captcha):
             'hCaptcha': '7'
         }
 
-    # ------------------------------------------------------------------------------- #
-
     @staticmethod
     def checkErrorStatus(response):
         errors = dict(
@@ -50,8 +49,6 @@ class captchaSolver(Captcha):
 
         if response.status_code in errors:
             raise CaptchaServiceUnavailable(errors.get(response.status_code))
-
-    # ------------------------------------------------------------------------------- #
 
     def login(self, username, password):
         self.username = username
@@ -86,8 +83,6 @@ class captchaSolver(Captcha):
         )
 
         self.debugRequest(response)
-
-    # ------------------------------------------------------------------------------- #
 
     def reportJob(self, jobID):
         if not jobID:
@@ -124,8 +119,6 @@ class captchaSolver(Captcha):
                 "DeathByCaptcha: Error report failed reCaptcha."
             )
 
-    # ------------------------------------------------------------------------------- #
-
     def requestJob(self, jobID):
         if not jobID:
             raise CaptchaBadJobID(
@@ -156,8 +149,6 @@ class captchaSolver(Captcha):
             raise CaptchaTimeout(
                 "DeathByCaptcha: Error failed to solve reCaptcha."
             )
-
-    # ------------------------------------------------------------------------------- #
 
     def requestSolve(self, captchaType, url, siteKey):
         def _checkRequest(response):
@@ -225,8 +216,6 @@ class captchaSolver(Captcha):
                 'DeathByCaptcha: Error no job id was returned.'
             )
 
-    # ------------------------------------------------------------------------------- #
-
     def getCaptchaAnswer(self, captchaType, url, siteKey, captchaParams):
         jobID = None
 
@@ -269,8 +258,6 @@ class captchaSolver(Captcha):
             raise CaptchaTimeout(
                 f"DeathByCaptcha: Captcha solve took to long to execute job id {jobID}, aborting."
             )
-
-# ------------------------------------------------------------------------------- #
 
 
 captchaSolver()

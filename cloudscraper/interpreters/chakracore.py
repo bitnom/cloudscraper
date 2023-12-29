@@ -1,3 +1,4 @@
+# file: cloudscraper/interpreters/chakracore.py
 from __future__ import absolute_import
 
 import os
@@ -9,17 +10,11 @@ from ctypes import c_void_p, c_size_t, byref, create_string_buffer, CDLL
 from . import JavaScriptInterpreter
 from .encapsulated import template
 
-# ------------------------------------------------------------------------------- #
-
 
 class ChallengeInterpreter(JavaScriptInterpreter):
 
-    # ------------------------------------------------------------------------------- #
-
     def __init__(self):
         super(ChallengeInterpreter, self).__init__('chakracore')
-
-    # ------------------------------------------------------------------------------- #
 
     def eval(self, body, domain):
         chakraCoreLibrary = None
@@ -97,7 +92,5 @@ class ChallengeInterpreter(JavaScriptInterpreter):
 
         return resultSTR.value
 
-
-# ------------------------------------------------------------------------------- #
 
 ChallengeInterpreter()

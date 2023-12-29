@@ -20,7 +20,7 @@ from . import url, mockCloudflare
 
 class TestCloudScraper:
 
-    # ------------------------------------------------------------------------------- #
+    
 
     @mockCloudflare(
         fixture='js_challenge-27-05-2020.html',
@@ -38,7 +38,7 @@ class TestCloudScraper:
             scraper = cloudscraper.create_scraper(interpreter=interpreter, **kwargs)
             scraper.get(url)
 
-    # ------------------------------------------------------------------------------- #
+    
 
     @mockCloudflare(
         fixture='js_challenge1_16_05_2020.html',
@@ -55,7 +55,7 @@ class TestCloudScraper:
             scraper = cloudscraper.create_scraper(interpreter=interpreter, **kwargs)
             scraper.get(url)
 
-    # ------------------------------------------------------------------------------- #
+    
 
     @mockCloudflare(
         fixture='js_challenge2_16_05_2020.html',
@@ -72,7 +72,7 @@ class TestCloudScraper:
             scraper = cloudscraper.create_scraper(interpreter=interpreter, **kwargs)
             scraper.get(url)
 
-    # ------------------------------------------------------------------------------- #
+    
 
     def test_create_scraper_js_challenge1_16_05_2020(self, **kwargs):
         # test
@@ -80,7 +80,7 @@ class TestCloudScraper:
         session.auth = ('user', 'test')
         cloudscraper.create_scraper(session)
 
-    # ------------------------------------------------------------------------------- #
+    
 
     @mockCloudflare(fixture='js_challenge1_16_05_2020.html', payload={})
     def test_bad_interpreter_js_challenge1_16_05_2020(self, **kwargs):
@@ -92,7 +92,7 @@ class TestCloudScraper:
             scraper = cloudscraper.create_scraper(interpreter='badInterpreter', **kwargs)
             scraper.get(url)
 
-    # ------------------------------------------------------------------------------- #
+    
 
     @mockCloudflare(
         fixture='js_challenge1_16_05_2020.html',
@@ -112,7 +112,7 @@ class TestCloudScraper:
             scraper = cloudscraper.create_scraper(**kwargs)
             scraper.get(url)
 
-    # ------------------------------------------------------------------------------- #
+    
 
     def test_bad_js_challenge1_16_05_2020(self, **kwargs):
         # test bad Captcha extraction.
@@ -134,7 +134,7 @@ class TestCloudScraper:
                 'native'
             )
 
-    # ------------------------------------------------------------------------------- #
+    
 
     @mockCloudflare(fixture='reCaptcha_challenge_12_12_2019.html', payload={})
     def test_Captcha_challenge_12_12_2019(self, **kwargs):
@@ -149,7 +149,7 @@ class TestCloudScraper:
         scraper = cloudscraper.create_scraper(captcha={'provider': 'return_response'}, **kwargs)
         scraper.get(url)
 
-    # ------------------------------------------------------------------------------- #
+    
 
     def test_bad_reCaptcha_challenge_12_12_2019(self, **kwargs):
         # test bad reCaptcha extraction.
@@ -160,7 +160,7 @@ class TestCloudScraper:
             scraper = cloudscraper.create_scraper(**kwargs)
             cloudscraper.Cloudflare(scraper).captcha_Challenge_Response(None, None, '', '')
 
-    # ------------------------------------------------------------------------------- #
+    
 
     def test_user_agent(self, **kwargs):
         for browser in ['chrome', 'firefox']:
@@ -194,7 +194,7 @@ class TestCloudScraper:
         scraper = cloudscraper.create_scraper(browser={'custom': 'aa50.0.9370.394', 'tryMatchCustom': True}, delay=0.1)
         assert any('!' in _ for _ in scraper.user_agent.cipherSuite)
 
-    # ------------------------------------------------------------------------------- #
+    
     # test ReCaptcha
 
     @mockCloudflare(fixture='reCaptcha_challenge_12_12_2019.html', payload={})
@@ -212,7 +212,7 @@ class TestCloudScraper:
                 )
                 scraper.get(url)
 
-    # ------------------------------------------------------------------------------- #
+    
 
     def test_helper(self, **kwargs):
         payload = helper.systemInfo()

@@ -1,3 +1,4 @@
+# file: cloudscraper/interpreters/__init__.py
 import sys
 import logging
 import abc
@@ -9,22 +10,14 @@ if sys.version_info >= (3, 4):
 else:
     ABC = abc.ABCMeta('ABC', (), {})
 
-# ------------------------------------------------------------------------------- #
-
 interpreters = {}
-
-# ------------------------------------------------------------------------------- #
 
 
 class JavaScriptInterpreter(ABC):
 
-    # ------------------------------------------------------------------------------- #
-
     @abc.abstractmethod
     def __init__(self, name):
         interpreters[name] = self
-
-    # ------------------------------------------------------------------------------- #
 
     @classmethod
     def dynamicImport(cls, name):
@@ -39,13 +32,9 @@ class JavaScriptInterpreter(ABC):
 
         return interpreters[name]
 
-    # ------------------------------------------------------------------------------- #
-
     @abc.abstractmethod
     def eval(self, jsEnv, js):
         pass
-
-    # ------------------------------------------------------------------------------- #
 
     def solveChallenge(self, body, domain):
         try:

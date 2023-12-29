@@ -1,3 +1,4 @@
+# file: cloudscraper/interpreters/js2py.py
 from __future__ import absolute_import
 
 import js2py
@@ -9,24 +10,18 @@ from . import JavaScriptInterpreter
 from .encapsulated import template
 from .jsunfuck import jsunfuck
 
-# ------------------------------------------------------------------------------- #
-
 
 class ChallengeInterpreter(JavaScriptInterpreter):
-
-    # ------------------------------------------------------------------------------- #
 
     def __init__(self):
         super(ChallengeInterpreter, self).__init__('js2py')
 
-    # ------------------------------------------------------------------------------- #
-
     def eval(self, body, domain):
-
         jsPayload = template(body, domain)
 
         if js2py.eval_js('(+(+!+[]+[+!+[]]+(!![]+[])[!+[]+!+[]+!+[]]+[!+[]+!+[]]+[+[]])+[])[+!+[]]') == '1':
-            logging.warning('WARNING - Please upgrade your js2py https://github.com/PiotrDabkowski/Js2Py, applying work around for the meantime.')
+            logging.warning(
+                'WARNING - Please upgrade your js2py https://github.com/PiotrDabkowski/Js2Py, applying work around for the meantime.')
             jsPayload = jsunfuck(jsPayload)
 
         def atob(s):
@@ -38,7 +33,5 @@ class ChallengeInterpreter(JavaScriptInterpreter):
 
         return result
 
-
-# ------------------------------------------------------------------------------- #
 
 ChallengeInterpreter()

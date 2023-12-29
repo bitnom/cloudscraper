@@ -1,3 +1,5 @@
+# file: cloudscraper/cloudflare.py
+
 # Cloudflare V1
 
 import re
@@ -6,8 +8,6 @@ import time
 
 from copy import deepcopy
 from collections import OrderedDict
-
-# ------------------------------------------------------------------------------- #
 
 try:
     from HTMLParser import HTMLParser
@@ -22,8 +22,6 @@ try:
 except ImportError:
     from urllib.parse import urlparse, urljoin
 
-# ------------------------------------------------------------------------------- #
-
 from .exceptions import (
     CloudflareCode1020,
     CloudflareIUAMError,
@@ -33,12 +31,8 @@ from .exceptions import (
     CloudflareCaptchaProvider
 )
 
-# ------------------------------------------------------------------------------- #
-
 from .captcha import Captcha
 from .interpreters import JavaScriptInterpreter
-
-# ------------------------------------------------------------------------------- #
 
 
 class Cloudflare():
@@ -46,9 +40,7 @@ class Cloudflare():
     def __init__(self, cloudscraper):
         self.cloudscraper = cloudscraper
 
-    # ------------------------------------------------------------------------------- #
     # Unescape / decode html entities
-    # ------------------------------------------------------------------------------- #
 
     @staticmethod
     def unescape(html_text):
@@ -60,112 +52,100 @@ class Cloudflare():
 
         return HTMLParser().unescape(html_text)
 
-    # ------------------------------------------------------------------------------- #
     # check if the response contains a valid Cloudflare challenge
-    # ------------------------------------------------------------------------------- #
 
     @staticmethod
     def is_IUAM_Challenge(resp):
         try:
             return (
-                resp.headers.get('Server', '').startswith('cloudflare')
-                and resp.status_code in [429, 503]
-                and re.search(r'/cdn-cgi/images/trace/jsch/', resp.text, re.M | re.S)
-                and re.search(
-                    r'''<form .*?="challenge-form" action="/\S+__cf_chl_f_tk=''',
-                    resp.text,
-                    re.M | re.S
-                )
+                    resp.headers.get('Server', '').startswith('cloudflare')
+                    and resp.status_code in [429, 503]
+                    and re.search(r'/cdn-cgi/images/trace/jsch/', resp.text, re.M | re.S)
+                    and re.search(
+                r'''<form .*?="challenge-form" action="/\S+__cf_chl_f_tk=''',
+                resp.text,
+                re.M | re.S
+            )
             )
         except AttributeError:
             pass
 
         return False
 
-    # ------------------------------------------------------------------------------- #
     # check if the response contains new Cloudflare challenge
-    # ------------------------------------------------------------------------------- #
 
     def is_New_IUAM_Challenge(self, resp):
         try:
             return (
-                self.is_IUAM_Challenge(resp)
-                and re.search(
-                    r'''cpo.src\s*=\s*['"]/cdn-cgi/challenge-platform/\S+orchestrate/jsch/v1''',
-                    resp.text,
-                    re.M | re.S
-                )
+                    self.is_IUAM_Challenge(resp)
+                    and re.search(
+                r'''cpo.src\s*=\s*['"]/cdn-cgi/challenge-platform/\S+orchestrate/jsch/v1''',
+                resp.text,
+                re.M | re.S
+            )
             )
         except AttributeError:
             pass
 
         return False
 
-    # ------------------------------------------------------------------------------- #
     # check if the response contains a v2 hCaptcha Cloudflare challenge
-    # ------------------------------------------------------------------------------- #
 
     def is_New_Captcha_Challenge(self, resp):
         try:
             return (
-                self.is_Captcha_Challenge(resp)
-                and re.search(
-                    r'''cpo.src\s*=\s*['"]/cdn-cgi/challenge-platform/\S+orchestrate/(captcha|managed)/v1''',
-                    resp.text,
-                    re.M | re.S
-                )
+                    self.is_Captcha_Challenge(resp)
+                    and re.search(
+                r'''cpo.src\s*=\s*['"]/cdn-cgi/challenge-platform/\S+orchestrate/(captcha|managed)/v1''',
+                resp.text,
+                re.M | re.S
+            )
             )
         except AttributeError:
             pass
 
         return False
 
-    # ------------------------------------------------------------------------------- #
     # check if the response contains a Cloudflare hCaptcha challenge
-    # ------------------------------------------------------------------------------- #
 
     @staticmethod
     def is_Captcha_Challenge(resp):
         try:
             return (
-                resp.headers.get('Server', '').startswith('cloudflare')
-                and resp.status_code == 403
-                and re.search(r'/cdn-cgi/images/trace/(captcha|managed)/', resp.text, re.M | re.S)
-                and re.search(
-                    r'''<form .*?="challenge-form" action="/\S+__cf_chl_f_tk=''',
-                    resp.text,
-                    re.M | re.S
-                )
+                    resp.headers.get('Server', '').startswith('cloudflare')
+                    and resp.status_code == 403
+                    and re.search(r'/cdn-cgi/images/trace/(captcha|managed)/', resp.text, re.M | re.S)
+                    and re.search(
+                r'''<form .*?="challenge-form" action="/\S+__cf_chl_f_tk=''',
+                resp.text,
+                re.M | re.S
+            )
             )
         except AttributeError:
             pass
 
         return False
 
-    # ------------------------------------------------------------------------------- #
     # check if the response contains Firewall 1020 Error
-    # ------------------------------------------------------------------------------- #
 
     @staticmethod
     def is_Firewall_Blocked(resp):
         try:
             return (
-                resp.headers.get('Server', '').startswith('cloudflare')
-                and resp.status_code == 403
-                and re.search(
-                    r'<span class="cf-error-code">1020</span>',
-                    resp.text,
-                    re.M | re.DOTALL
-                )
+                    resp.headers.get('Server', '').startswith('cloudflare')
+                    and resp.status_code == 403
+                    and re.search(
+                r'<span class="cf-error-code">1020</span>',
+                resp.text,
+                re.M | re.DOTALL
+            )
             )
         except AttributeError:
             pass
 
         return False
 
-    # ------------------------------------------------------------------------------- #
     # Wrapper for is_Captcha_Challenge, is_IUAM_Challenge, is_Firewall_Blocked
-    # ------------------------------------------------------------------------------- #
 
     def is_Challenge_Request(self, resp):
         if self.is_Firewall_Blocked(resp):
@@ -193,9 +173,7 @@ class Cloudflare():
 
         return False
 
-    # ------------------------------------------------------------------------------- #
     # Try to solve cloudflare javascript challenge.
-    # ------------------------------------------------------------------------------- #
 
     def IUAM_Challenge_Response(self, body, url, interpreter):
         try:
@@ -242,9 +220,7 @@ class Cloudflare():
             'data': payload
         }
 
-    # ------------------------------------------------------------------------------- #
     #  Try to solve the Captcha challenge via 3rd party.
-    # ------------------------------------------------------------------------------- #
 
     def captcha_Challenge_Response(self, provider, provider_params, body, url):
         try:
@@ -276,22 +252,16 @@ class Cloudflare():
                 "Cloudflare Captcha detected, unfortunately we can't extract the parameters correctly."
             )
 
-        # ------------------------------------------------------------------------------- #
         # Pass proxy parameter to provider to solve captcha.
-        # ------------------------------------------------------------------------------- #
 
         if self.cloudscraper.proxies and self.cloudscraper.proxies != self.cloudscraper.captcha.get('proxy'):
             self.cloudscraper.captcha['proxy'] = self.proxies
 
-        # ------------------------------------------------------------------------------- #
         # Pass User-Agent if provider supports it to solve captcha.
-        # ------------------------------------------------------------------------------- #
 
         self.cloudscraper.captcha['User-Agent'] = self.cloudscraper.headers['User-Agent']
 
-        # ------------------------------------------------------------------------------- #
         # Submit job to provider to request captcha solve.
-        # ------------------------------------------------------------------------------- #
 
         captchaResponse = Captcha.dynamicImport(
             provider.lower()
@@ -302,9 +272,7 @@ class Cloudflare():
             provider_params
         )
 
-        # ------------------------------------------------------------------------------- #
         # Parse and handle the response of solved captcha.
-        # ------------------------------------------------------------------------------- #
 
         dataPayload = OrderedDict([
             ('r', payload.get('name="r" value', '')),
@@ -323,16 +291,13 @@ class Cloudflare():
             'data': dataPayload
         }
 
-    # ------------------------------------------------------------------------------- #
     # Attempt to handle and send the challenge response back to cloudflare
-    # ------------------------------------------------------------------------------- #
 
     def Challenge_Response(self, resp, **kwargs):
         if self.is_Captcha_Challenge(resp):
-            # ------------------------------------------------------------------------------- #
+
             # double down on the request as some websites are only checking
             # if cfuid is populated before issuing Captcha.
-            # ------------------------------------------------------------------------------- #
 
             if self.cloudscraper.doubleDown:
                 resp = self.cloudscraper.decodeBrotli(
@@ -342,14 +307,12 @@ class Cloudflare():
             if not self.is_Captcha_Challenge(resp):
                 return resp
 
-            # ------------------------------------------------------------------------------- #
             # if no captcha provider raise a runtime error.
-            # ------------------------------------------------------------------------------- #
 
             if (
-                not self.cloudscraper.captcha
-                or not isinstance(self.cloudscraper.captcha, dict)
-                or not self.cloudscraper.captcha.get('provider')
+                    not self.cloudscraper.captcha
+                    or not isinstance(self.cloudscraper.captcha, dict)
+                    or not self.cloudscraper.captcha.get('provider')
             ):
                 self.cloudscraper.simpleException(
                     CloudflareCaptchaProvider,
@@ -357,16 +320,12 @@ class Cloudflare():
                     "correctly via the 'captcha' parameter."
                 )
 
-            # ------------------------------------------------------------------------------- #
             # if provider is return_response, return the response without doing anything.
-            # ------------------------------------------------------------------------------- #
 
             if self.cloudscraper.captcha.get('provider') == 'return_response':
                 return resp
 
-            # ------------------------------------------------------------------------------- #
             # Submit request to parser wrapper to solve captcha
-            # ------------------------------------------------------------------------------- #
 
             submit_url = self.captcha_Challenge_Response(
                 self.cloudscraper.captcha.get('provider'),
@@ -375,9 +334,8 @@ class Cloudflare():
                 resp.url
             )
         else:
-            # ------------------------------------------------------------------------------- #
+
             # Cloudflare requires a delay before solving the challenge
-            # ------------------------------------------------------------------------------- #
 
             if not self.cloudscraper.delay:
                 try:
@@ -397,17 +355,13 @@ class Cloudflare():
 
             time.sleep(self.cloudscraper.delay)
 
-            # ------------------------------------------------------------------------------- #
-
             submit_url = self.IUAM_Challenge_Response(
                 resp.text,
                 resp.url,
                 self.cloudscraper.interpreter
             )
 
-        # ------------------------------------------------------------------------------- #
         # Send the Challenge Response back to Cloudflare
-        # ------------------------------------------------------------------------------- #
 
         if submit_url:
 
@@ -450,10 +404,8 @@ class Cloudflare():
                     'Invalid challenge answer detected, Cloudflare broken?'
                 )
 
-            # ------------------------------------------------------------------------------- #
             # Return response if Cloudflare is doing content pass through instead of 3xx
             # else request with redirect URL also handle protocol scheme change http -> https
-            # ------------------------------------------------------------------------------- #
 
             if not challengeSubmitResponse.is_redirect:
                 return challengeSubmitResponse
@@ -480,11 +432,7 @@ class Cloudflare():
                     **cloudflare_kwargs
                 )
 
-        # ------------------------------------------------------------------------------- #
         # We shouldn't be here...
         # Re-request the original query and/or process again....
-        # ------------------------------------------------------------------------------- #
 
         return self.cloudscraper.request(resp.request.method, resp.url, **kwargs)
-
-    # ------------------------------------------------------------------------------- #

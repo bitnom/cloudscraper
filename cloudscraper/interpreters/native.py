@@ -1,3 +1,4 @@
+# file: cloudscraper/interpreters/native.py
 from __future__ import absolute_import
 
 import ast
@@ -8,8 +9,6 @@ import pyparsing
 from ..exceptions import CloudflareSolveError
 from . import JavaScriptInterpreter
 
-# ------------------------------------------------------------------------------- #
-
 _OP_MAP = {
     ast.Add: op.add,
     ast.Sub: op.sub,
@@ -18,33 +17,23 @@ _OP_MAP = {
     ast.Invert: op.neg,
 }
 
-# ------------------------------------------------------------------------------- #
-
 
 class Calc(ast.NodeVisitor):
 
     def visit_BinOp(self, node):
         return _OP_MAP[type(node.op)](self.visit(node.left), self.visit(node.right))
 
-    # ------------------------------------------------------------------------------- #
-
     def visit_Num(self, node):
         return node.n
 
-    # ------------------------------------------------------------------------------- #
-
     def visit_Expr(self, node):
         return self.visit(node.value)
-
-    # ------------------------------------------------------------------------------- #
 
     @classmethod
     def doMath(cls, expression):
         tree = ast.parse(expression)
         calc = cls()
         return calc.visit(tree.body[0])
-
-# ------------------------------------------------------------------------------- #
 
 
 class Parentheses(object):
@@ -54,8 +43,6 @@ class Parentheses(object):
         self.visited = set([s])
         self.dfs(s, self.invalid(s), res)
         return res
-
-    # ------------------------------------------------------------------------------- #
 
     def dfs(self, s, n, res):
         if n == 0:
@@ -68,8 +55,6 @@ class Parentheses(object):
                     self.visited.add(s_new)
                     self.dfs(s_new, self.invalid(s_new), res)
 
-    # ------------------------------------------------------------------------------- #
-
     def invalid(self, s):
         plus = minus = 0
         memo = {"(": 1, ")": -1}
@@ -79,15 +64,11 @@ class Parentheses(object):
             plus = max(0, plus)
         return plus + minus
 
-# ------------------------------------------------------------------------------- #
-
 
 class ChallengeInterpreter(JavaScriptInterpreter):
 
     def __init__(self):
         super(ChallengeInterpreter, self).__init__('native')
-
-    # ------------------------------------------------------------------------------- #
 
     def eval(self, body, domain):
 
@@ -98,12 +79,8 @@ class ChallengeInterpreter(JavaScriptInterpreter):
             '/': op.truediv
         }
 
-        # ------------------------------------------------------------------------------- #
-
         def flatten(lists):
             return sum(map(flatten, lists), []) if isinstance(lists, list) else [lists]
-
-        # ------------------------------------------------------------------------------- #
 
         def jsfuckToNumber(jsFuck):
             # "Clean Up" JSFuck
@@ -125,8 +102,6 @@ class ChallengeInterpreter(JavaScriptInterpreter):
 
             return int(''.join([str(Calc.doMath(''.join(i))) for i in stack]))
 
-        # ------------------------------------------------------------------------------- #
-
         def divisorMath(payload, needle, domain):
             jsfuckMath = payload.split('/')
             if needle in jsfuckMath[1]:
@@ -135,8 +110,8 @@ class ChallengeInterpreter(JavaScriptInterpreter):
                 expression_value = operators[expression[1]](
                     float(jsfuckToNumber(expression[0])),
                     float(ord(domain[jsfuckToNumber(jsfuckMath[1][
-                        jsfuckMath[1].find('"("+p+")")}') + len('"("+p+")")}'):-2
-                    ])]))
+                                                    jsfuckMath[1].find('"("+p+")")}') + len('"("+p+")")}'):-2
+                                                    ])]))
                 )
             else:
                 expression_value = jsfuckToNumber(jsfuckMath[1])
@@ -144,8 +119,6 @@ class ChallengeInterpreter(JavaScriptInterpreter):
             expression_value = jsfuckToNumber(jsfuckMath[0]) / float(expression_value)
 
             return expression_value
-
-        # ------------------------------------------------------------------------------- #
 
         def challengeSolve(body, domain):
             jschl_answer = 0
@@ -158,7 +131,8 @@ class ChallengeInterpreter(JavaScriptInterpreter):
                     re.DOTALL | re.MULTILINE
                 ).groupdict()
             except AttributeError:
-                raise CloudflareSolveError('There was an issue extracting "jsfuckChallenge" from the Cloudflare challenge.')
+                raise CloudflareSolveError(
+                    'There was an issue extracting "jsfuckChallenge" from the Cloudflare challenge.')
 
             kJSFUCK = re.search(r'(;|)\s*k.=(?P<kJSFUCK>\S+);', jsfuckChallenge['challenge'], re.S | re.M)
             if kJSFUCK:
@@ -191,15 +165,11 @@ class ChallengeInterpreter(JavaScriptInterpreter):
                 jsfuckChallenge['challenge']
             )
 
-            # ------------------------------------------------------------------------------- #
-
             if '/' in jsfuckChallenge['init']:
                 val = jsfuckChallenge['init'].split('/')
                 jschl_answer = jsfuckToNumber(val[0]) / float(jsfuckToNumber(val[1]))
             else:
                 jschl_answer = jsfuckToNumber(jsfuckChallenge['init'])
-
-            # ------------------------------------------------------------------------------- #
 
             for expressionMatch in jsfuckChallenge['challenge']:
                 oper, expression = expressionMatch.groups()
@@ -214,20 +184,12 @@ class ChallengeInterpreter(JavaScriptInterpreter):
 
                 jschl_answer = operators[oper](jschl_answer, expression_value)
 
-            # ------------------------------------------------------------------------------- #
-
             # if not jsfuckChallenge['k'] and '+ t.length' in body:
             #    jschl_answer += len(domain)
 
-            # ------------------------------------------------------------------------------- #
-
             return '{0:.10f}'.format(jschl_answer)
 
-        # ------------------------------------------------------------------------------- #
-
         return challengeSolve(body, domain)
-
-# ------------------------------------------------------------------------------- #
 
 
 ChallengeInterpreter()

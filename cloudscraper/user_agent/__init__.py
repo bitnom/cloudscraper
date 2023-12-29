@@ -1,3 +1,4 @@
+# file: cloudscraper/user_agent/__init__.py
 import json
 import os
 import random
@@ -7,19 +8,13 @@ import ssl
 
 from collections import OrderedDict
 
-# ------------------------------------------------------------------------------- #
-
 
 class User_Agent():
-
-    # ------------------------------------------------------------------------------- #
 
     def __init__(self, *args, **kwargs):
         self.headers = None
         self.cipherSuite = []
         self.loadUserAgent(*args, **kwargs)
-
-    # ------------------------------------------------------------------------------- #
 
     def filterAgents(self, user_agents):
         filtered = {}
@@ -34,20 +29,17 @@ class User_Agent():
 
         return filtered
 
-    # ------------------------------------------------------------------------------- #
-
     def tryMatchCustom(self, user_agents):
         for device_type in user_agents['user_agents']:
             for platform in user_agents['user_agents'][device_type]:
                 for browser in user_agents['user_agents'][device_type][platform]:
-                    if re.search(re.escape(self.custom), ' '.join(user_agents['user_agents'][device_type][platform][browser])):
+                    if re.search(re.escape(self.custom),
+                                 ' '.join(user_agents['user_agents'][device_type][platform][browser])):
                         self.headers = user_agents['headers'][browser]
                         self.headers['User-Agent'] = self.custom
                         self.cipherSuite = user_agents['cipherSuite'][browser]
                         return True
         return False
-
-    # ------------------------------------------------------------------------------- #
 
     def loadUserAgent(self, *args, **kwargs):
         self.browser = kwargs.pop('browser', None)
@@ -93,14 +85,16 @@ class User_Agent():
         else:
             if self.browser and self.browser not in self.browsers:
                 sys.tracebacklimit = 0
-                raise RuntimeError(f'Sorry "{self.browser}" browser is not valid, valid browsers are [{", ".join(self.browsers)}].')
+                raise RuntimeError(
+                    f'Sorry "{self.browser}" browser is not valid, valid browsers are [{", ".join(self.browsers)}].')
 
             if not self.platform:
                 self.platform = random.SystemRandom().choice(self.platforms)
 
             if self.platform not in self.platforms:
                 sys.tracebacklimit = 0
-                raise RuntimeError(f'Sorry the platform "{self.platform}" is not valid, valid platforms are [{", ".join(self.platforms)}]')
+                raise RuntimeError(
+                    f'Sorry the platform "{self.platform}" is not valid, valid platforms are [{", ".join(self.platforms)}]')
 
             filteredAgents = self.filterAgents(user_agents['user_agents'])
 
@@ -111,7 +105,8 @@ class User_Agent():
 
             if not filteredAgents[self.browser]:
                 sys.tracebacklimit = 0
-                raise RuntimeError(f'Sorry "{self.browser}" browser was not found with a platform of "{self.platform}".')
+                raise RuntimeError(
+                    f'Sorry "{self.browser}" browser was not found with a platform of "{self.platform}".')
 
             self.cipherSuite = user_agents['cipherSuite'][self.browser]
             self.headers = user_agents['headers'][self.browser]

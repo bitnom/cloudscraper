@@ -19,7 +19,7 @@ cloudscraper_kwargs = dict(delay=0.01, debug=False)
 # Cloudflare challenge fixtures are only read from the FS once
 cache = {}
 
-# ------------------------------------------------------------------------------- #
+
 
 
 def fixtures(filename):
@@ -34,7 +34,7 @@ def fixtures(filename):
             cache[filename] = fp.read()
     return cache[filename]
 
-# ------------------------------------------------------------------------------- #
+
 
 
 def mockCloudflare(fixture, payload):
@@ -53,7 +53,7 @@ def mockCloudflare(fixture, payload):
                             fixtures(fixture)
                         )
 
-                # ------------------------------------------------------------------------------- #
+                
 
                 return (
                     200,
@@ -70,7 +70,7 @@ def mockCloudflare(fixture, payload):
                     'Solved OK'
                 )
 
-            # ------------------------------------------------------------------------------- #
+            
 
             def challengeCallback(request):
                 status_code = 503
@@ -89,7 +89,7 @@ def mockCloudflare(fixture, payload):
                     fixtures(fixture)
                 )
 
-            # ------------------------------------------------------------------------------- #
+            
 
             responses.add_callback(
                 responses.POST,
@@ -105,14 +105,14 @@ def mockCloudflare(fixture, payload):
                 content_type='text/html',
             )
 
-            # ------------------------------------------------------------------------------- #
+            
 
             return test(self, **cloudscraper_kwargs)
 
-        # ------------------------------------------------------------------------------- #
+        
 
         return wrapper
 
-    # ------------------------------------------------------------------------------- #
+    
 
     return responses_decorator

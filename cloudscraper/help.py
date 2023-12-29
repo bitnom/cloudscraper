@@ -1,3 +1,4 @@
+# file: cloudscraper/help.py
 import json
 import platform
 import requests
@@ -8,8 +9,6 @@ import urllib3
 from collections import OrderedDict
 from . import __version__ as cloudscraper_version
 
-# ------------------------------------------------------------------------------- #
-
 
 def getPossibleCiphers():
     try:
@@ -18,8 +17,6 @@ def getPossibleCiphers():
         return sorted([cipher['name'] for cipher in context.get_ciphers()])
     except AttributeError:
         return 'get_ciphers() is unsupported'
-
-# ------------------------------------------------------------------------------- #
 
 
 def _pythonVersion():
@@ -35,8 +32,6 @@ def _pythonVersion():
         'name': interpreter,
         'version': interpreter_version
     }
-
-# ------------------------------------------------------------------------------- #
 
 
 def systemInfo():
@@ -64,8 +59,6 @@ def systemInfo():
             ]
         ))
     ])
-
-# ------------------------------------------------------------------------------- #
 
 
 if __name__ == '__main__':
